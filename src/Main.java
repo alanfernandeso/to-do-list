@@ -1,12 +1,17 @@
-import modelos.Tarefas;
+import modelos.ComparadorTarefa;
+import modelos.Tarefa;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
 
-        ArrayList<Tarefas> listaDeTarefas = new ArrayList<Tarefas>();
+        ArrayList<Tarefa> listaDeTarefas = new ArrayList<Tarefa>();
         Scanner scan = new Scanner(System.in);
 
         int opcaoMenu = 0;
@@ -29,15 +34,21 @@ public class Main {
             opcaoMenu = scan.nextInt();
 
             if (opcaoMenu == 1) {
-                Tarefas tarefa = new Tarefas();
                 System.out.println("Descrição: ");
                 String descricao = scan.next();
-                System.out.println("Data de vencimento: ");
-                String dataDeVencimento = scan.next();
+                System.out.println("Data de vencimento: [yyyy-MM-dd] ");
+                String inputData = scan.next();
 
-                tarefa.setDescricao(descricao);
-                tarefa.setDataDeVencimento(dataDeVencimento);
-                listaDeTarefas.add(tarefa);
+               DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+                try {
+                    LocalDate data = LocalDate.parse(inputData, formatter);
+                    Tarefa tarefa = new Tarefa(descricao, data);
+                    listaDeTarefas.add(tarefa);
+                } catch (Exception e) {
+                    System.out.println("Formato de data inválido. Certifique-se de inserir no formato especificado.");
+                }
+
 
                 System.out.println("Tarefa adicionada!");
 
@@ -70,6 +81,7 @@ public class Main {
                     }
                 }
             } else if (opcaoMenu == 4) {
+                Collections.sort(listaDeTarefas, new ComparadorTarefa());
                 System.out.println("===== LISTA DE TAREFAS =====");
                 for (int i = 0; i < listaDeTarefas.size(); i++) {
                     System.out.println(listaDeTarefas.get(i).toString());
